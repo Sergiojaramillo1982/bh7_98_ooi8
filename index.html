@@ -78,20 +78,10 @@ function getChildData(container){return [...$(container).children].map(el=>({nom
 function formatChildData(hijos){return hijos.map((h,i)=>'Hijo '+(i+1)+': '+h.nombre+' | Género: '+(h.genero||'Por confirmar')+' | Nacimiento: '+h.fecha+' | Empresa: '+(h.empresa||'No indicada')).join('\n')}
 function whatsapp(message){window.open('https://wa.me/'+PHONE+'?text='+encodeURIComponent(message),'_blank','noopener,noreferrer')}
 $('send').onclick=()=>{if(!verified)return;const kind=document.querySelector('[name=kind]:checked')?.value;if(!kind){$('reportError').textContent='Selecciona una opción para continuar.';return}let msg='CONSULTA FAMILIAR - LA PRADERA\nColaborador: '+$('person').value+'\nHijos registrados: '+selected.length+'\n';if(kind==='ok'){
-const fmt=f=>{if(!f)return 'No registrada';const [y,m,d]=f.split('-');return d+'/'+m+'/'+y};
-const nombre=$('person').value;
-const area=[...new Set(selected.map(h=>h.a).filter(Boolean))].join(', ')||'No registrada';
-const empresa=[...new Set(selected.map(h=>h.e).filter(Boolean))].join(', ')||'No registrada';
-const detalle=selected.map((h,i)=>'Hijo '+(i+1)+'\nNombre: '+h.h+'\nFecha de nacimiento: '+fmt(h.f)+'\nGénero: '+(h.g==='F'?'Femenino':h.g==='M'?'Masculino':h.g||'No registrado')).join('\n\n');
-msg='*CONFIRMACIÓN DE INFORMACIÓN FAMILIAR*\n*LA PRADERA · GESTIÓN HUMANA*\n\n'+
-'*Estado:* INFORMACIÓN VERIFICADA Y CORRECTA\n'+
-'*Colaborador:* '+nombre+'\n*Área:* '+area+'\n*Empresa:* '+empresa+'\n'+
-'*Total de hijos registrados:* '+selected.length+'\n\n'+
-'*DETALLE DE LOS HIJOS CONFIRMADOS*\n'+detalle+'\n\n'+
-'*DECLARACIÓN DEL COLABORADOR*\n'+
-'Confirmo que revisé la información relacionada anteriormente y que la cantidad de hijos, sus nombres, fechas de nacimiento y género son correctos. Asimismo, confirmo que no tengo hijos pendientes de registrar ni novedades que reportar.\n\n'+
-'*Fecha de confirmación:* '+new Date().toLocaleString('es-CO',{dateStyle:'long',timeStyle:'short'})+'\n'+
-'*Gestión requerida:* Registrar la confirmación recibida; no se solicitan correcciones.';
+msg='*CONSULTA DE INFORMACIÓN FÁBRICA DE SONRISAS*\n'+
+'*Nombre del colaborador:* '+$('person').value+'\n'+
+'*Hijos registrados:* '+selected.length+'\n'+
+'*Resultado:* Confirmo información correcta.';
 }else{const type=$('type').value,notes=$('notes').value.trim();if(!type){$('reportError').textContent='Selecciona el tipo de novedad.';return}if(type==='Hijo no registrado'){const hijos=getChildData('registeredChildren');if(hijos.some(h=>!h.nombre||!h.fecha)){ $('reportError').textContent='Completa nombre y fecha de nacimiento de cada hijo faltante.';return}msg+='Resultado: NOVEDAD\nTipo: '+type+'\nHijos adicionales: '+hijos.length+'\n'+formatChildData(hijos)+'\nObservaciones: '+(notes||'Sin observaciones')}else{if(!notes){$('reportError').textContent='Describe la novedad.';return}msg+='Resultado: NOVEDAD\nTipo: '+type+'\nDetalle: '+notes}} $('reportError').textContent='';whatsapp(msg)};
 function addMissingChild(){const wrapper=document.createElement('div');wrapper.className='child';wrapper.style.marginTop='12px';wrapper.innerHTML='<div class="grid"><label class="field">Nombre completo del hijo/a<input class="child-name" maxlength="120" placeholder="Nombre y apellidos"></label><label class="field">Género<select class="child-gender"><option value="">Selecciona...</option><option>Femenino</option><option>Masculino</option><option>Otro / Por confirmar</option></select></label><label class="field">Fecha de nacimiento<input class="child-birth" type="date"></label><label class="field">Empresa<input class="child-company" maxlength="120" placeholder="Empresa del colaborador"></label></div><div class="actions"><button type="button" class="btn light child-remove">Quitar hijo</button></div>';wrapper.querySelector('.child-remove').onclick=()=>{if($('missingChildren').children.length>1)wrapper.remove();else $('missingError').textContent='Debes registrar al menos un hijo.'};$('missingChildren').append(wrapper)}
 $('addMissingChild').onclick=addMissingChild;addMissingChild();
